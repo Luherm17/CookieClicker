@@ -4,9 +4,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { useAuth } from './AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 
+import {db} from './firebase'
+import { collection, addDoc } from 'firebase/firestore'
 
 export default function Signup() {
 
+    //authentication stuff
     const emailRef = useRef()
     const passwordRef = useRef()
     const passwordConfirmRef = useRef()
@@ -14,6 +17,9 @@ export default function Signup() {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
+
+    //firestore stuff
+    const usersCollectionRef = collection(db, 'users')
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -26,6 +32,15 @@ export default function Signup() {
             setError('')
             setLoading(true)
             await signup(emailRef.current.value, passwordRef.current.value)
+
+            await addDoc(usersCollectionRef, 
+                {name: emailRef.current.value,
+                 cookies: 10,
+                 factory: Number(0),
+                 grandma: Number(0),
+                 mine: Number(0),
+                 temple: Number(0)})
+
             navigate('/')
         } catch {
             setError('Failed to create account')
@@ -33,8 +48,10 @@ export default function Signup() {
 
         setLoading(false)
 
-        
     }
+
+
+
     return (
         <>
             <Card>
