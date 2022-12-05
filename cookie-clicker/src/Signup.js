@@ -5,7 +5,7 @@ import { useAuth } from './AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 
 import {db} from './firebase'
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc, setDoc, doc} from 'firebase/firestore'
 
 export default function Signup() {
 
@@ -32,7 +32,22 @@ export default function Signup() {
             setError('')
             setLoading(true)
             await signup(emailRef.current.value, passwordRef.current.value)
+            
+            await setDoc(doc(db, "users", String(emailRef.current.value)), {
 
+                name: emailRef.current.value,
+                 cookies: Number(10),
+                 factory: Number(0),
+                 grandma: Number(0),
+                 mine: Number(0),
+                 temple: Number(0)
+                
+                }
+
+            )
+
+
+            /*
             await addDoc(usersCollectionRef, 
                 {name: emailRef.current.value,
                  cookies: 10,
@@ -41,6 +56,7 @@ export default function Signup() {
                  mine: Number(0),
                  temple: Number(0)})
 
+            */
             navigate('/')
         } catch {
             setError('Failed to create account')
