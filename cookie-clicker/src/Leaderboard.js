@@ -6,15 +6,17 @@ import { collection, getDocs, getDoc, updateDoc, doc, query, where, setDoc, incr
 
 export default function Leaderboard({ userList }) {
 
-    
 
-    const users = userList
+
+    //const users = userList
+
+    const users = [{name: "james", cookies: 100},{name: "glip", cookies: 23489},{name: "boondle", cookies: 2343},{name: "george", cookies: 23422},{name: "swag king", cookies: 3}]
 
     return (
         <>
 
             <Card>
-                <Card.Title className='text-center'>
+                <Card.Title className='text-center mt-3'>
                     Leaderboard
                 </Card.Title>
 
@@ -23,8 +25,16 @@ export default function Leaderboard({ userList }) {
                     <ListGroup numbered={true}>
                         {users.map((user) => {
                             return (
-                                <ListGroup.Item>
-                                    {user.name}{": "} {user.cookies}
+                                <ListGroup.Item style={{display: 'flex', alignItems: 'center'}}>
+
+                                    <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
+                                        <h5 style={{marginLeft: '10px', marginBottom: '0'}}>{user.name}</h5>
+                                    
+                                        <h4 style={{marginBottom: '0'}}>{user.cookies}</h4>
+                                    </div>
+
+
+                                   
 
                                 </ListGroup.Item>
                             )

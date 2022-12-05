@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Button, Alert } from 'react-bootstrap'
+import { Card, Button, Alert, Navbar, Container, Nav } from 'react-bootstrap'
 import { useAuth } from './AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { db } from './firebase'
@@ -9,6 +9,10 @@ import cookieImg from './assets/cookie.png'
 import Leaderboard from './Leaderboard'
 import Upgrades from './Upgrades'
 
+import 'animate.css'
+
+import './Dashboard.css'
+
 export default function Dashboard() {
 
     const [error, setError] = useState('')
@@ -17,22 +21,22 @@ export default function Dashboard() {
 
     const [users, setUsers] = useState([])
 
-    const [cookies, setCookies] = useState()
+    const [cookies, setCookies] = useState(0)
 
     const usersCollectionRef = query(collection(db, 'users'), orderBy("cookies", 'desc'), limit(3))
 
-    
+
 
     useEffect(() => {
 
         const getUsers = async () => {
             const data = await getDocs(usersCollectionRef)
-            
+
             setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
             console.log(data)
 
         }
-        
+
         /*
         setInterval(() => {
 
@@ -79,34 +83,41 @@ export default function Dashboard() {
     return (
 
         <>
-            
-            <Card>
-                <Card.Body>
-                    <h2 className='text-center mb-4>'>Profile</h2>
+            <Navbar bg='' style={{backgroundColor: '#f0d7c0'}} variant="light" fixed="">
+                <Container>
+                    <Navbar.Brand href="/">Cookie Clicker</Navbar.Brand>
+                    <Nav className="justify-content-end">
 
-                    {error && <Alert variant='danger'>{error}</Alert>}
+                        <Nav.Link href="">{currentUser.email}</Nav.Link>
+                        <Nav.Link href="" onClick={handleLogout}>Sign out</Nav.Link>
+                    </Nav>
+                </Container>
+            </Navbar>
 
-                    <strong>Email:</strong> {currentUser.email}
 
-                </Card.Body>
-            </Card>
+            {error && <Alert variant='danger'>{error}</Alert>}
 
-            <div className='w-100 text-center mt-2'>
-                <Button variant='link' onClick={handleLogout}>Log out</Button>
+            <div className='dashboard-container'>
+
+                <Leaderboard userList={users} />
+
+                <div style={{textAlign: 'center'}}>
+
+                    <Button className='animate__animated animate__bounce' size="lg" variant="" onClick={clickCookie}>
+                        <img class='animate__animated animate__bounce' src={cookieImg} alt="add item" width="300" />
+                    </Button>
+
+                    <div className="cookie-count text-center">
+                        <h2>Cookies</h2>
+                        <h1>{cookies}</h1>
+                    </div>
+                </div>
+
+
+                <Upgrades currUser={currentUser} />
             </div>
 
-            <Button className='text-align-center' size="lg" variant="" onClick={clickCookie}>
-                <img src={cookieImg} alt="add item" width="300" />
-            </Button>
 
-            <h2>Cookies clicked: </h2> {cookies}
-
-            <br />
-            <br />
-
-            <Leaderboard userList={users} />
-
-            <Upgrades currUser={currentUser}/>
         </>
     )
 }

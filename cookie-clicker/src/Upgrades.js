@@ -6,7 +6,10 @@ import { collection, getDocs, getDoc, updateDoc, doc, query, where, setDoc, incr
 
 import factoryImg from './assets/factory.png'
 import templeImg from './assets/temple.png'
-import mineImg from './assets/mine.png'
+import mineImg from './assets/mine2.png'
+import grandmaImg from './assets/grandma.png'
+
+import './Upgrades.css'
 
 export default function Upgrades({ currUser }) {
 
@@ -56,7 +59,7 @@ export default function Upgrades({ currUser }) {
         <>
 
             <Card>
-                <Card.Title className='text-center'>
+                <Card.Title className='text-center mt-3'>
                     Upgrades
                 </Card.Title>
 
@@ -64,30 +67,61 @@ export default function Upgrades({ currUser }) {
                 <Card.Body>
                     <ListGroup>
 
+                        <ListGroup.Item id='grandma' className="upgrade-container">
 
-                        <ListGroup.Item id='grandma'>
-                            <img src="https://www.clipartmax.com/png/small/18-188588_grandmother-clip-art.png" style={{height: 100}} ></img>Grandma
-                            <Button onClick={buyUpgrade}>Buy</Button>
-                            <p>Count: {upgrades[0]}</p>
+                            <div className="upgrade-container-cell">
+                                <img class='upgrade-img' src={grandmaImg} ></img>
+                                <p>Grandma</p>
+                            </div>
+
+                            <div className="upgrade-container-cell"> 
+                                <p>Count: {upgrades[0]}</p>
+                                <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
+                            </div>
+                            
+                        </ListGroup.Item>
+
+                        <ListGroup.Item id='mine' className="upgrade-container">
+
+                            <div className="upgrade-container-cell">
+                                <img class='upgrade-img' src={mineImg} ></img>
+                                <p>Cookie Mine</p>
+                            </div>
+
+                            <div className="upgrade-container-cell"> 
+                                <p>Count: {upgrades[1]}</p>
+                                <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
+                            </div>
 
                         </ListGroup.Item>
 
-                        <ListGroup.Item id='mine'>
-                            <img src={mineImg} style={{height: 100}} ></img>Cookie Mine
-                            <Button onClick={buyUpgrade}>Buy</Button>
-                            <p>Count: {upgrades[1]}</p>
+                        <ListGroup.Item id='factory' className="upgrade-container">
+
+                            <div className="upgrade-container-cell">
+                                <img class='upgrade-img' src={factoryImg} ></img>
+                                <p>Factory</p>
+                            </div>
+
+                            <div className="upgrade-container-cell"> 
+                                <p>Count: {upgrades[2]}</p>
+                                <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
+                            </div>
+
                         </ListGroup.Item>
 
-                        <ListGroup.Item id='factory'>
-                            <img src={factoryImg} style={{height: 100}} ></img>Factory
-                            <Button onClick={buyUpgrade}>Buy</Button>
-                            <p>Count: {upgrades[2]}</p>
-                        </ListGroup.Item>
 
-                        <ListGroup.Item id='temple'>
-                        <img src={templeImg} style={{height: 100}} ></img>Temple
-                            <Button onClick={buyUpgrade}>Buy</Button>
-                            <p>Count: {upgrades[3]}</p>
+                        <ListGroup.Item id='temple' className="upgrade-container">
+
+                            <div className="upgrade-container-cell">
+                                <img class='upgrade-img' src={templeImg} ></img>
+                                <p>Cookie Temple</p>
+                            </div>
+
+                            <div className="upgrade-container-cell"> 
+                                <p>Count: {upgrades[3]}</p>
+                                <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
+                            </div>
+
                         </ListGroup.Item>
 
 

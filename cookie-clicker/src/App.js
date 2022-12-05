@@ -9,6 +9,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import PrivateRoute from './PrivateRoute'
 
+import './App.css'
+
 
 function App() {
   return (
@@ -19,7 +21,7 @@ function App() {
         style={{minHeight: '100vh'}}
       >
         
-        <div className='w-100' style={{ maxWidth: '400px' }}>
+        <div className='w-100'>
 
             <Router>
               <AuthProvider>
