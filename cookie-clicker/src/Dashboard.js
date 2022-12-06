@@ -22,6 +22,7 @@ export default function Dashboard() {
     const [users, setUsers] = useState([])
 
     const [cookies, setCookies] = useState(0)
+    const cookiesStr = ""
 
     const usersCollectionRef = query(collection(db, 'users'), orderBy("cookies", 'desc'), limit(3))
 
@@ -37,12 +38,14 @@ export default function Dashboard() {
 
         }
 
+        //setInterval(getUsers, 5000)
         /*
         setInterval(() => {
 
             getUsers()
         }, 1000);
         */
+       
     }, [])
 
     async function handleLogout() {
@@ -56,7 +59,57 @@ export default function Dashboard() {
         }
     }
 
-    const clickCookie = async () => {
+    function clickCookie() {
+
+        // update cookies on UI here
+
+        setCookies(cookies + 1)
+        
+        console.log('Cookie count: ' + cookies)
+
+        //change state in here
+
+    }
+
+    const getCookiesFromDB = async () => {
+
+        const docRef = doc(db, "users", currentUser.email);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data().cookies);
+            setCookies(docSnap.data().cookies)
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }
+
+    
+
+
+    const updateCookies = async () => {
+        // make API call periodically here
+
+        const q = doc(db, "users", currentUser.email)
+
+        await updateDoc(q, {
+            //cookies: increment(1)
+            cookies: cookies
+            
+        });
+
+        console.log('updated in database!')
+        //take code from state and then push it
+
+    }
+
+    //setInterval(updateCookies, 60 * 1000);
+
+    // make API call every 5 minutes to update cookies for the user 300_000
+    //setInterval(updateCookies, 5000)
+
+    const clickCookie2 = async () => {
 
         console.log("cookie clicked!")
 
@@ -78,6 +131,18 @@ export default function Dashboard() {
             console.log("No such document!");
         }
 
+    }
+
+
+    function setCookiesString() {
+
+        if(cookies > 999_999_999) {
+            cookiesStr = String(cookies % 1_000_000_000) + "B"
+        }
+        else if(cookies > 999_999) {
+            cookiesStr = String(cookies % 1_000_000) + "M"
+        }
+        
     }
 
     return (
@@ -104,12 +169,12 @@ export default function Dashboard() {
                 <div style={{textAlign: 'center'}}>
 
                     <Button className='animate__animated animate__bounce' size="lg" variant="" onClick={clickCookie}>
-                        <img class='animate__animated animate__bounce' src={cookieImg} alt="add item" width="300" />
+                        <img className='animate__animated animate__bounce' src={cookieImg} alt="add item" width="300" />
                     </Button>
 
                     <div className="cookie-count text-center">
                         <h2>Cookies</h2>
-                        <h1>{cookies}</h1>
+                        <h1>{cookies.toLocaleString()}</h1>
                     </div>
                 </div>
 

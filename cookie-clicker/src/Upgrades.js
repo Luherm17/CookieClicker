@@ -16,8 +16,82 @@ export default function Upgrades({ currUser }) {
 
     const [upgrades, setUpgrades] = useState([])
 
-    
+    const [grandmas, setGrandmas] = useState()
+    const [mines, setMines] = useState()
+    const [factories, setFactories] = useState()
+    const [temples, setTemples] = useState()
 
+
+    useEffect(() => {
+
+        const getUpgrades = async () => {
+
+            const docRef = doc(db, "users", currUser.email);
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+
+                setGrandmas(docSnap.data().grandma)
+                setMines(docSnap.data().mine)
+                setFactories(docSnap.data().factory)
+                setTemples(docSnap.data().temple)
+                
+                
+                console.log('temples: ' + docSnap.data().temple)
+            }
+            
+        }
+
+        getUpgrades()
+
+        console.log("grannies2: " + grandmas)
+
+        //console.log(upgrades)
+
+        //setInterval(updateUpgrades, 5000)
+
+       
+    }, [])
+
+    
+    // get the current values from the DB
+
+    function buyUpgrade() {
+
+        setGrandmas(grandmas + 1)
+        /*
+        const q = doc(db, "users", currUser.email)
+        
+        await updateDoc(q, {
+            grandma: increment(1)
+
+        });
+        */
+        console.log("upgrade bought!")
+        //console.log(upgrades)
+
+        console.log('grannies1: ' + grandmas)
+
+       updateUpgrades()
+
+    }
+
+    const updateUpgrades = async () => {
+
+        const q = doc(db, "users", currUser.email)
+
+        console.log(grandmas + " " + mines + " " + factories + " " + temples)
+
+        await updateDoc(q, {
+            grandma: grandmas,
+            mine: mines,
+            factory: factories,
+            temple: temples
+        }) 
+
+    }
+
+    /*
     const showUpgrades = async () => {
 
         const docRef = doc(db, "users", currUser.email);
@@ -34,25 +108,11 @@ export default function Upgrades({ currUser }) {
         console.log(upgrades)
 
     }
-
+    */
     //showUpgrades()
 
-    const buyUpgrade = async () => {
+    
 
-        console.log("upgrade bought!")
-
-        const q = doc(db, "users", currUser.email)
-        
-        /*
-        await updateDoc(q, {
-            grandma: increment(1)
-
-        });
-        */
-
-        showUpgrades()
-
-    }
 
     
     return (
@@ -75,7 +135,7 @@ export default function Upgrades({ currUser }) {
                             </div>
 
                             <div className="upgrade-container-cell"> 
-                                <p>Count: {upgrades[0]}</p>
+                                <p>Count: {grandmas || 0}</p>
                                 <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
                             </div>
                             
@@ -89,7 +149,7 @@ export default function Upgrades({ currUser }) {
                             </div>
 
                             <div className="upgrade-container-cell"> 
-                                <p>Count: {upgrades[1]}</p>
+                                <p>Count: {mines || 0}</p>
                                 <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
                             </div>
 
@@ -103,7 +163,7 @@ export default function Upgrades({ currUser }) {
                             </div>
 
                             <div className="upgrade-container-cell"> 
-                                <p>Count: {upgrades[2]}</p>
+                                <p>Count: {factories || 0}</p>
                                 <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
                             </div>
 
@@ -118,7 +178,7 @@ export default function Upgrades({ currUser }) {
                             </div>
 
                             <div className="upgrade-container-cell"> 
-                                <p>Count: {upgrades[3]}</p>
+                                <p>Count: {temples || 0}</p>
                                 <Button style={{width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f'}}onClick={buyUpgrade}>Buy</Button>
                             </div>
 

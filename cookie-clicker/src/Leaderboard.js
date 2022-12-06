@@ -8,9 +8,9 @@ export default function Leaderboard({ userList }) {
 
 
 
-    //const users = userList
+    const users = userList
 
-    const users = [{name: "james", cookies: 100},{name: "glip", cookies: 23489},{name: "boondle", cookies: 2343},{name: "george", cookies: 23422},{name: "swag king", cookies: 3}]
+    //const users = [{name: "james", cookies: 100},{name: "glip", cookies: 23489},{name: "boondle", cookies: 2343},{name: "george", cookies: 23422},{name: "swag king", cookies: 3}]
 
     return (
         <>
