@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, Button, Alert, ListGroup } from 'react-bootstrap'
 
 import { db } from './firebase'
-import { collection, getDocs, getDoc, updateDoc, doc, query, where, setDoc, increment } from 'firebase/firestore'
+import { collection, getDocs, getDoc, updateDoc, doc, query, where, setDoc, increment, arrayUnion } from 'firebase/firestore'
 
 import factoryImg from './assets/factory.png'
 import templeImg from './assets/temple.png'
@@ -22,10 +22,8 @@ import prestigeTen from './assets/prestigeTen.png'
 
 import './Upgrades.css'
 
-export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
+export default function Upgrades({ currUser, localCookies, setLocalCookies, setLocalAchievements }) {
 
-
-    const [upgrades, setUpgrades] = useState([])
 
     const [grandmas, setGrandmas] = useState()
     const [mines, setMines] = useState()
@@ -35,7 +33,6 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
     const [prestigeLevel, setPrestigeLevel] = useState(0)
     const [prestigeImg, setPrestigeImg] = useState(privateImg)
 
-    // const [localCookies, setLocalCookies] = useState()
 
 
     useEffect(() => {
@@ -54,13 +51,9 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
                 setLocalCookies(docSnap.data().cookies)
                 setPrestigeLevel(docSnap.data().prestigeLvl)
 
-                // (async () => {
-                //     async function tick() {
-                //         await docSnap.current()
-                //     }
-                // })
                 setInterval(() => {
                     cookieCalc()
+                    checkAchievements()
                 }, 5000);
 
                 console.log('temples: ' + docSnap.data().temple)
@@ -74,10 +67,6 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
         changePrestigeImg()
 
         console.log("grannies2: " + grandmas)
-
-        //console.log(upgrades)
-
-        //setInterval(updateUpgrades, 5000)
 
 
     }, [])
@@ -116,10 +105,11 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
             } else {
                 let temp = cookieCount +
                     (grandmaCount * 15) +
-                    (mineCount * 100) +
-                    (factoryCount * 1000) +
+                    (mineCount * 75) +
+                    (factoryCount * 750) +
                     (templeCount * 10000)
                 setLocalCookies(temp)
+                checkAchievements()
                 await updateDoc(docRef, {
                     //cookies: increment(1)
                     cookies: temp
@@ -127,55 +117,83 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
                 });
                 console.log("fuck")
             }
-            // setLocalCookies(tempCookies + granny * 15)
 
-            // console.log("COOKIE NUM " + tempCookies)
-            // setLocalCookies(localCookies + granny * 15)
-            // console.log("Inc: " + localCookies)
-            // setCookies += granny * 15
-            // console.log("Inc: " + setCookies)
         }
 
     }
 
-    // function cookieCalc() {
+    const checkAchievements = async () => {
 
-    //     // const docRef = doc(db, "users", currUser.email);
-    //     // const docSnap = await getDoc(docRef);
-    //     // let granny = docSnap.data().grandma
-    //     // setGrandmas(grandmas => (grandmas))
-    //     console.log("GILFS: " + grandmas)
+        
 
-    //     if (grandmas < 1) {
-    //         console.log("No GILF upgrade " + grandmas)
-    //     } else {
-    //         updateLocalCookies(grandmas)
-    //         // console.log("COOKIE NUM " + tempCookies)
-    //         // setLocalCookies(localCookies + granny * 15)
-    //         // console.log("Inc: " + localCookies)
-    //         // setCookies += granny * 15
-    //         // console.log("Inc: " + setCookies)
-    //     }
+        const q = doc(db, "users", currUser.email)
+        const docSnap = await getDoc(q);
 
-    // }
+        let currCookies = docSnap.data().cookies
+        console.log('local cookies: ' + currCookies)
+        
+        let grandmaCount = docSnap.data().grandma
+        let mineCount = docSnap.data().mine
+        let factoryCount = docSnap.data().factory
+        let templeCount = docSnap.data().temple
 
-    // function checkGrandmas(input, i) {
-    //     console.log("GRANDMA NUM " + input)
-    //     if (input < 1) {
-    //         console.log("No GILF upgrade " + input)
-    //     } else {
-    //         updateLocalCookies(input, i)
-    //     }
-    // }
+        const arr = docSnap.data().achievements
 
-    // function updateLocalCookies(input, i) {
-    //     console.log("FUCK " + input)
-    //     console.log("COOKIE NUM " + i)
-    //     setLocalCookies(i + input * 15)
-    //     console.log("Inc: " + i)
-    // }
+        if(currCookies > 0 && !arr.includes('On the Board - Acquire your first cookie')) {
+            await updateDoc(q, {
+                achievements: arrayUnion('On the Board - Acquire your first cookie')
+            });
+        }
 
-    // get the current values from the DB
+        else if(currCookies > 999 && !arr.includes('Cookie Connoisseur - Reach 1,000 cookies')) {
+            await updateDoc(q, {
+                achievements: arrayUnion('Cookie Connoisseur - Reach 1,000 cookies')
+    
+            });
+        }
+
+        else if(currCookies > 999999 && !arr.includes('Cookie Deity - Reach 1,000,000 cookies')) {
+            await updateDoc(q, {
+                achievements: arrayUnion('Cookie Deity - Reach 1,000,000 cookies')
+    
+            });
+        }
+
+        else if(grandmaCount > 19 && !arr.includes("Who's the Helper Now? - Buy 20 Grandmas")) {
+            
+            await updateDoc(q, {
+                achievements: arrayUnion("Who's the Helper Now? - Buy 20 Grandmas")
+    
+            });
+            
+        }
+
+        else if(mineCount > 14 && !arr.includes("Wait, this isn't Gold - Buy 15 mines")) {
+            await updateDoc(q, {
+                achievements: arrayUnion("Wait, this isn't Gold - Buy 15 mines")
+    
+            });
+        }
+        else if(factoryCount > 9 && !arr.includes("Charlie Who? - Buy 10 factories")) {
+            await updateDoc(q, {
+                achievements: arrayUnion("Charlie Who? - Buy 10 factories")
+    
+            });
+        }
+        else if(templeCount > 4 && !arr.includes("Praise the Cookie God - Buy 5 temples")) {
+            await updateDoc(q, {
+                achievements: arrayUnion("Praise the Cookie God - Buy 5 temples")
+    
+            });
+        }
+
+        else {
+            console.log('here (upgrades)')
+        }
+
+        setLocalAchievements(arr)
+
+    }
 
     function buyGrandma() {
         if (localCookies >= 20) {
@@ -183,11 +201,11 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
             setLocalCookies(localCookies - 20)
             removeCookies("grandma")
             updateUpgrades("grandma")
+
+            checkAchievements()
         } else {
             alert("Not enough money!")
         }
-        // console.log("upgrade bought!")
-        // console.log(localCookies + " FUCK")
     }
     function buyMine() {
         if (localCookies >= 100) {
@@ -195,6 +213,8 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
             setLocalCookies(localCookies - 100)
             removeCookies("mine")
             updateUpgrades("mine")
+
+            checkAchievements()
         } else {
             alert("Not enough money!")
         }
@@ -206,6 +226,8 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
             setLocalCookies(localCookies - 1000)
             removeCookies("factory")
             updateUpgrades("factory")
+
+            checkAchievements()
         } else {
             alert("Not enough money!")
         }
@@ -217,6 +239,8 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
             setLocalCookies(localCookies - 15000)
             removeCookies("temple")
             updateUpgrades("temple")
+
+            checkAchievements()
         } else {
             alert("Not enough money!")
         }
@@ -268,18 +292,6 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
             })
         }
 
-        // console.log(grandmas + " " + mines + " " + factories + " " + temples)
-        // await updateDoc(q, {
-        //     grandma: grandmas,
-        //     mine: mines,
-        //     factory: factories,
-        //     temple: temples
-        //     // grandma: increment(1),
-        //     // mine: increment(1),
-        //     // factory: increment(1),
-        //     // temple: increment(1)
-        // })
-
     }
 
     function prestigeUser() {
@@ -291,8 +303,6 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
             setMines(0)
             setFactories(0)
             setTemples(0)
-            // setPrestigeLevel(prestigeLevel + 1)
-            // changePrestigeImg()
             updatePrestige();
             alert("You prestiged!")
         } else {
@@ -365,27 +375,6 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
         }
     }
 
-    /*
-    const showUpgrades = async () => {
-
-        const docRef = doc(db, "users", currUser.email);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            
-            setUpgrades([docSnap.data().grandma, 
-                        docSnap.data().mine,
-                        docSnap.data().factory,
-                        docSnap.data().temple])
-        } 
-        
-        console.log(upgrades)
-
-    }
-    */
-    //showUpgrades()
-
-
 
 
 
@@ -405,7 +394,7 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
 
                             <div className="upgrade-container-cell">
                                 <img class='upgrade-img' src={grandmaImg} ></img>
-                                <p>Grandma</p>
+                                <p>Grandma (+15)</p>
                             </div>
 
                             <div className="upgrade-container-cell">
@@ -419,7 +408,7 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
 
                             <div className="upgrade-container-cell">
                                 <img class='upgrade-img' src={mineImg} ></img>
-                                <p>Cookie Mine</p>
+                                <p>Cookie Mine (+75)</p>
                             </div>
 
                             <div className="upgrade-container-cell">
@@ -433,7 +422,7 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
 
                             <div className="upgrade-container-cell">
                                 <img class='upgrade-img' src={factoryImg} ></img>
-                                <p>Factory</p>
+                                <p>Factory (+750)</p>
                             </div>
 
                             <div className="upgrade-container-cell">
@@ -448,7 +437,7 @@ export default function Upgrades({ currUser, localCookies, setLocalCookies }) {
 
                             <div className="upgrade-container-cell">
                                 <img class='upgrade-img' src={templeImg} ></img>
-                                <p>Cookie Temple</p>
+                                <p style={{textAlign: 'center'}}>Cookie Temple (+10,000)</p>
                             </div>
 
                             <div className="upgrade-container-cell">

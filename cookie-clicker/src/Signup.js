@@ -41,23 +41,14 @@ export default function Signup() {
                 grandma: Number(0),
                 mine: Number(0),
                 temple: Number(0),
-                prestigeLvl: Number(0)
+                prestigeLvl: Number(0),
+
+                achievements: ['Ready to Go - Create an account and sign in']
 
             }
 
             )
 
-
-            /*
-            await addDoc(usersCollectionRef, 
-                {name: emailRef.current.value,
-                 cookies: 10,
-                 factory: Number(0),
-                 grandma: Number(0),
-                 mine: Number(0),
-                 temple: Number(0)})
-
-            */
             navigate('/')
         } catch {
             setError('Failed to create account')

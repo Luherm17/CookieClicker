@@ -3,11 +3,12 @@ import { Card, Button, Alert, Navbar, Container, Nav } from 'react-bootstrap'
 import { useAuth } from './AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { db } from './firebase'
-import { collection, getDocs, getDoc, updateDoc, doc, query, where, setDoc, increment, orderBy, limit } from 'firebase/firestore'
+import { collection, getDocs, getDoc, updateDoc, doc, query, where, setDoc, increment, orderBy, limit, arrayUnion } from 'firebase/firestore'
 
 import cookieImg from './assets/cookie.png'
 import Leaderboard from './Leaderboard'
 import Upgrades from './Upgrades'
+import Achievements from './Achievements'
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 // import Alert from '@material-ui/lab/Alert';
@@ -25,12 +26,11 @@ export default function Dashboard() {
     const [users, setUsers] = useState([])
 
     const [cookies, setCookies] = useState(0)
-    const cookiesStr = ""
 
-    // const [prestigeLevel, setPrestigeLevel] = useState(0)
+    const [achievements, setAchievements] = useState([10])
+    
 
     const usersCollectionRef = query(collection(db, 'users'), orderBy("prestigeLvl", 'desc'), orderBy("cookies", 'desc'), limit(5))
-    // const test = usersCollectionRef.orderBy("cookies", 'desc')
 
 
     useEffect(() => {
@@ -51,7 +51,6 @@ export default function Dashboard() {
             if (docSnap.exists()) {
                 console.log("Document data:", docSnap.data().cookies);
                 setCookies(docSnap.data().cookies)
-                // setPrestigeLevel(docSnap.data().prestigeLvl)
                 setInterval(() => {
                     getUsers();
                 }, 5000);
@@ -60,18 +59,32 @@ export default function Dashboard() {
                 console.log("No such document!");
             }
         }
+
+        const getAchievements = async () => {
+
+            const docSnap = await getDoc((doc(db, 'users', currentUser.email)))
+
+            if(docSnap.exists()) {
+                console.log("Achievements: " + docSnap.data().achievements)
+                
+
+                setAchievements(docSnap.data().achievements)
+                
+
+            }
+
+
+        }
+
         getUsers();
         getCookiesFromDB();
+        getAchievements();
 
-        //setInterval(getUsers, 5000)
-        /*
-        setInterval(() => {
-
-            getUsers()
-        }, 1000);
-        */
 
     }, [])
+
+
+
 
     async function handleLogout() {
         setError('')
@@ -115,6 +128,7 @@ export default function Dashboard() {
 
         //change state in here
         updateCookies();
+
     }
 
 
@@ -124,6 +138,7 @@ export default function Dashboard() {
         // make API call periodically here
 
         const q = doc(db, "users", currentUser.email)
+        
 
         await updateDoc(q, {
             //cookies: increment(1)
@@ -135,11 +150,6 @@ export default function Dashboard() {
         //take code from state and then push it
 
     }
-
-    //setInterval(updateCookies, 60 * 1000);
-
-    // make API call every 5 minutes to update cookies for the user 300_000
-    //setInterval(updateCookies, 5000)
 
     const clickCookie2 = async () => {
 
@@ -164,50 +174,6 @@ export default function Dashboard() {
         }
 
     }
-
-
-    function setCookiesString() {
-
-        console.log(cookies)
-
-        // if(cookies > 999_999_999) {
-        //     cookiesStr = String(cookies % 1_000_000_000) + "B"
-        // }
-        // else if(cookies > 999_999) {
-        //     cookiesStr = String(cookies % 1_000_000) + "M"
-        // }
-
-    }
-
-    // function prestigeUser() {
-    //     if (cookies >= 1000000) {
-    //         setPrestigeLevel(prestigeLevel + 1)
-    //         alert("You prestiged!")
-    //         updatePrestige();
-    //     } else {
-    //         alert("Not enough cookies!")
-    //     }
-    // }
-
-    // const updatePrestige = async () => {
-    //     // make API call periodically here
-
-    //     const q = doc(db, "users", currentUser.email)
-
-    //     await updateDoc(q, {
-    //         cookies: 0,
-    //         factory: 0,
-    //         grandma: 0,
-    //         mine: 0,
-    //         temple: 0,
-    //         prestigeLvl: increment(1)
-    //     });
-
-    //     console.log('updated in database!')
-
-    // }
-
-    setCookiesString()
 
     return (
 
@@ -244,14 +210,16 @@ export default function Dashboard() {
                 </div>
 
 
-                <Upgrades currUser={currentUser} localCookies={cookies} setLocalCookies={setCookies} />
+                <Upgrades currUser={currentUser} localCookies={cookies} setLocalCookies={setCookies} setLocalAchievements={setAchievements} />
             </div>
 
-            {/* <div className="prestige-container-cell">
-                <p>Prestige Level: {prestigeLevel || 0}</p>
-                <Button style={{ width: '100%', backgroundColor: '#5bc75f', borderColor: '#5bc75f' }} onClick={prestigeUser}>Prestige</Button>
-            </div> */}
+            <h2 style={{textAlign: 'center'}}>
+                Achievements
+            </h2>
 
+            <Achievements achievementList={achievements}></Achievements>
+
+            
 
         </>
     )
