@@ -28,9 +28,9 @@ export default function Leaderboard({ userList }) {
                                 <ListGroup.Item style={{display: 'flex', alignItems: 'center'}}>
 
                                     <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
-                                        <h5 style={{marginLeft: '10px', marginBottom: '0'}}>{user.name}</h5>
+                                        <h5 style={{marginLeft: '10px', marginBottom: '0'}}>{user.name} ({user.prestigeLvl})</h5>
                                     
-                                        <h4 style={{marginBottom: '0'}}>{user.cookies}</h4>
+                                        <h4 style={{marginBottom: '0'}}> {user.cookies.toLocaleString()}</h4>
                                     </div>
 
 

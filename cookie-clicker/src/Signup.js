@@ -4,8 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { useAuth } from './AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 
-import {db} from './firebase'
-import { collection, addDoc, setDoc, doc} from 'firebase/firestore'
+import { db } from './firebase'
+import { collection, addDoc, setDoc, doc } from 'firebase/firestore'
 
 export default function Signup() {
 
@@ -32,17 +32,18 @@ export default function Signup() {
             setError('')
             setLoading(true)
             await signup(emailRef.current.value, passwordRef.current.value)
-            
+
             await setDoc(doc(db, "users", String(emailRef.current.value)), {
 
                 name: emailRef.current.value,
-                 cookies: Number(10),
-                 factory: Number(0),
-                 grandma: Number(0),
-                 mine: Number(0),
-                 temple: Number(0)
-                
-                }
+                cookies: Number(0),
+                factory: Number(0),
+                grandma: Number(0),
+                mine: Number(0),
+                temple: Number(0),
+                prestigeLvl: Number(0)
+
+            }
 
             )
 
@@ -73,7 +74,7 @@ export default function Signup() {
             <Card>
                 <Card.Body>
                     <h2 className='text-center mb-4>'>Sign Up</h2>
-                    
+
                     {error && <Alert variant='danger'>{error}</Alert>}
                     <Form onSubmit={handleSubmit}>
                         <Form.Group id='email'>
@@ -96,7 +97,7 @@ export default function Signup() {
                 </Card.Body>
             </Card>
             <div className='w-100 text-center mt-2'>
-                Already have an account? <Link to='/login'>Log in</Link> 
+                Already have an account? <Link to='/login'>Log in</Link>
             </div>
         </>
     )
